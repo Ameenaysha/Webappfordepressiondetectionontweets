@@ -24,9 +24,9 @@ import itertools
 st.write("""
 # Depression Detection
 Detect if some twitter user has depression using machine learning and python""")
-image = Image.open('C:/Users/Ameen Harafan/Desktop/Detecting-Depression-in-Tweets-master/Detecting-Depression-in-Tweets-master/image.jpg')
+image = Image.open('image.jpg')
 st.image(image, caption='ML', use_column_width=True)
-tweets=pd.read_csv('C:/Users/Ameen Harafan/Desktop/Detecting-Depression-in-Tweets-master/Detecting-Depression-in-Tweets-master/output.csv')
+tweets=pd.read_csv('output.csv')
 vectorizer = TfidfVectorizer(stop_words='english')
 x = []
 y = []
@@ -136,7 +136,7 @@ def plot_confusion_matrix(cm, classes,
 
 
 def learns():    
-    tweet = pd.read_csv('C:/Users/Ameen Harafan/Desktop/Detecting-Depression-in-Tweets-master/Detecting-Depression-in-Tweets-master/sentiment_tweets31.csv')
+    tweet = pd.read_csv('sentiment_tweets31.csv')
     tweet.drop(['Unnamed: 0'], axis = 1, inplace = True)
     z = []
     for col in tweet['message']:
