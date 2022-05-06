@@ -10,6 +10,7 @@ import tweepy
 import csv
 import re
 import spacy
+spacy.cli.download("en_core_web_lg")
 import nltk
 import time
 import matplotlib.pyplot as plt
