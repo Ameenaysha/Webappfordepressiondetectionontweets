@@ -219,27 +219,26 @@ def pred(inputtweet):
  
     st.subheader('WordCloud Analysis of Training Data:')
     st.write("Available [here](https://drive.google.com/drive/folders/1VMG0MgJ-nZrEYRTLBxbKVwtwNVUKXq0N?usp=sharing)")
-try:
-    with st.form(key='my_form'):
-        inputtweet = st.text_input(label='Input your twitter handle without @:')
-        col1, col2, col3 , col4, col5 = st.columns(5)
+#try:
+with st.form(key='my_form'):
+    inputtweet = st.text_input(label='Input your twitter handle without @:')
+    col1, col2, col3 , col4, col5 = st.columns(5)
 
-        with col1:
-            pass
-        with col2:
-            pass
-        with col3:
-            pass
-        with col4:
-            pass
-        with col5 :      
-            submit_button = st.form_submit_button(label='Check')
-        
-        get_all_tweets(inputtweet)
-
-    learns()
-    pred(inputtweet)
-except:
-    time.sleep(10)
-    st.info("Waiting for your correct input...")
+    with col1:
+        pass
+    with col2:
+        pass
+    with col3:
+        pass
+    with col4:
+        pass
+    with col5 :      
+        submit_button = st.form_submit_button(label='Check')
+      
+    get_all_tweets(inputtweet)
+learns()
+pred(inputtweet)
+#except:
+    #time.sleep(10)
+    #st.info("Waiting for your correct input...")
     
