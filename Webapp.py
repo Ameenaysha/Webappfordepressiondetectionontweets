@@ -174,8 +174,8 @@ def pred(inputtweet):
     dtree = tree.DecisionTreeClassifier()  
     dtree = dtree.fit(train_featurestree, [int(r) for r in y]) 
     i=0
-    #nlp = spacy.load('en_core_web_lg')
-    nlp=en_core_web_lg.load()
+    nlp = spacy.load('en_core_web_lg')
+    
     for row in tweet['text']:
         RE_EMOJI = re.compile('[\U00010000-\U0010ffff]', flags=re.UNICODE)
         row = RE_EMOJI.sub(r'', row)
