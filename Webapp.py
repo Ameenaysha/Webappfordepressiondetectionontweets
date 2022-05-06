@@ -201,16 +201,16 @@ def pred(inputtweet):
         st.write("Mild Depression")
     elif (percentage>=0.40 and percentage<=0.55):
         st.write("Borderline Depression")
-        st.video("C:/Users/Ameen Harafan/Desktop/Detecting-Depression-in-Tweets-master/Detecting-Depression-in-Tweets-master/DealingDepression.mp4")
+        
     elif (percentage>=0.55 and percentage<=0.70):
         st.write("Moderate Depression")
-        st.video("C:/Users/Ameen Harafan/Desktop/Detecting-Depression-in-Tweets-master/Detecting-Depression-in-Tweets-master/DealingDepression.mp4")
+        
     elif (percentage>=0.70 and percentage<=0.85):
         st.write("Severe Depression")
-        st.video("C:/Users/Ameen Harafan/Desktop/Detecting-Depression-in-Tweets-master/Detecting-Depression-in-Tweets-master/DealingDepression.mp4")
+        
     else:
         st.write("Extreme Depression")
-        st.video("C:/Users/Ameen Harafan/Desktop/Detecting-Depression-in-Tweets-master/Detecting-Depression-in-Tweets-master/DealingDepression.mp4")
+        
     print (dep)
     print (percentage)
 
