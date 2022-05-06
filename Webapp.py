@@ -9,7 +9,7 @@ from sklearn import tree
 import tweepy
 import csv
 import re
-import spacy
+import spacy_streamlit
 import nltk
 import time
 import matplotlib.pyplot as plt
