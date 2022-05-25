@@ -150,7 +150,7 @@ def pred(inputtweet):
         st.write("Mild Depression")
     else:
         st.write("Severe Depression")
-        #st.video("C:/Users/Ameen Harafan/Desktop/Detecting-Depression-in-Tweets-master/Detecting-Depression-in-Tweets-master/DealingDepression.mp4")
+        st.video("DealingDepression.mp4")
     print (dep)
     print (percentage)
 
