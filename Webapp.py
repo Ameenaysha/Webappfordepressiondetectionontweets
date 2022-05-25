@@ -35,7 +35,10 @@ st.write("""
 Detect if some twitter user has depression using machine learning and python""")
 image = Image.open('image.jpg')
 st.image(image, caption='ML', use_column_width=True)
-svc = pickle.load(open('svm1.pkl', 'rb'))
+
+#vectorizer = TfidfVectorizer()
+svc = pickle.load(open('svm1.pkl', 'rb'))   
+
 def get_all_tweets(screen_name):  
     consumer_key = "FHSCcqycpgpHoFZ1OqZKtNLKE"
     consumer_secret = "YNdtiBJXuyMuTP0QyfAoEGbFvizyoIjCPZeUgDAwLqB2kJnOhc"
@@ -91,7 +94,9 @@ def find_negated_wordSentIdxs_in_sent(sent, idxs_of_interest=None):
                 continue
         if word_is_negated(word):
             negated_word_idxs.add(word_sent_idx)
-    return negated_word_idxs
+    return negated_word_idxs 
+
+
 
 def pred(inputtweet):
     tweet = pd.read_csv('{}_tweets.csv'.format(inputtweet))
@@ -140,18 +145,11 @@ def pred(inputtweet):
         st.write("Considered Normal")
     elif (percentage>=0.25 and percentage<=0.40):
         st.write("Mild Depression")
-    elif (percentage>=0.40 and percentage<=0.55):
-        st.write("Borderline Depression")
-        
-    elif (percentage>=0.55 and percentage<=0.70):
-        st.write("Moderate Depression")
-        
-    elif (percentage>=0.70 and percentage<=0.85):
-        st.write("Severe Depression")
-        
     else:
-        st.write("Extreme Depression")
-
+        st.write("Severe Depression")
+        #st.video("C:/Users/Ameen Harafan/Desktop/Detecting-Depression-in-Tweets-master/Detecting-Depression-in-Tweets-master/DealingDepression.mp4")
+    print (dep)
+    print (percentage)
 
     st.subheader('Training Data Information:')
     st.write("Available [here](https://drive.google.com/file/d/1QK5IOH4mWeFtqppTBbxDuEonohhrjdIj/view?usp=sharing)")
@@ -172,3 +170,4 @@ try:
 except:
     time.sleep(10)
     st.info("Waiting for your correct input...")
+    
