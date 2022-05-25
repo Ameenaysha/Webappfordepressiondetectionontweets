@@ -22,22 +22,20 @@ from sklearn import tree
 from sklearn import metrics
 from sklearn.metrics import confusion_matrix
 import itertools
+import string
+import pickle
+from nltk.corpus import stopwords
+from nltk.stem import PorterStemmer
+from nltk.stem import WordNetLemmatizer
+from nltk.tokenize import word_tokenize
+
 
 st.write("""
 # Depression Detection
 Detect if some twitter user has depression using machine learning and python""")
 image = Image.open('image.jpg')
 st.image(image, caption='ML', use_column_width=True)
-tweets=pd.read_csv('output.csv')
-vectorizer = TfidfVectorizer(stop_words='english')
-x = []
-y = []
-for row in tweets['SentimentText']:   
-    x.append(row)
-for rows in tweets['Sentiment']:
-    y.append(rows)
-
-
+svc = pickle.load(open('svm1.pkl', 'rb'))
 def get_all_tweets(screen_name):  
     consumer_key = "FHSCcqycpgpHoFZ1OqZKtNLKE"
     consumer_secret = "YNdtiBJXuyMuTP0QyfAoEGbFvizyoIjCPZeUgDAwLqB2kJnOhc"
@@ -94,98 +92,38 @@ def find_negated_wordSentIdxs_in_sent(sent, idxs_of_interest=None):
         if word_is_negated(word):
             negated_word_idxs.add(word_sent_idx)
     return negated_word_idxs
-    
-
-def metric(labels, predictions):
-    true_pos, true_neg, false_pos, false_neg = 0, 0, 0, 0
-    for i in range(len(labels)):
-        true_pos += int(labels.iloc[i] == 0 and predictions[i] == 0)
-        true_neg += int(labels.iloc[i] == 1 and predictions[i] == 1)
-        false_pos += int(labels.iloc[i] == 1 and predictions[i] == 0)
-        false_neg += int(labels.iloc[i] == 0 and predictions[i] == 1)
-    precision = true_pos / (true_pos + false_pos)
-    recall = true_pos / (true_pos + false_neg)
-    Fscore = 2 * precision * recall / (precision + recall)
-    accuracy = (true_pos + true_neg) / (true_pos + true_neg + false_pos + false_neg)
-    st.write("Precision: ", precision)
-    st.write("Recall: ", recall)
-    st.write("F-score: ", Fscore)
-    st.write("Accuracy: ", accuracy)
-
-def plot_confusion_matrix(cm, classes,
-                          normalize=False,
-                          title='Confusion matrix',
-                          cmap=plt.cm.Blues):
-    fig=plt.figure(figsize = (10, 5))
-    plt.imshow(cm, interpolation='nearest', cmap=cmap)
-    plt.title(title)
-    plt.colorbar()
-    tick_marks = np.arange(len(classes))
-    plt.xticks(tick_marks, classes, rotation=45)
-    plt.yticks(tick_marks, classes)
-
-    fmt = '.2f' if normalize else 'd'
-    thresh = cm.max() / 2.
-    for i, j in itertools.product(range(cm.shape[0]), range(cm.shape[1])):
-        plt.text(j, i, format(cm[i, j], fmt),
-                 horizontalalignment="center",
-                 color="white" if cm[i, j] > thresh else "black")
-
-    plt.tight_layout()
-    plt.ylabel('Actual label')
-    plt.xlabel('Predicted label')
-    st.pyplot(fig)
-
-
-def learns():    
-    tweet = pd.read_csv('sentiment_tweets31.csv')
-    tweet.drop(['Unnamed: 0'], axis = 1, inplace = True)
-    z = []
-    for col in tweet['message']:
-        RE_EMOJI = re.compile('[\U00010000-\U0010ffff]', flags=re.UNICODE)
-        col = RE_EMOJI.sub(r'', col)
-        col = ''.join([c for c in col if ord(c) < 128])
-        col=contractions.fix(col)
-        z.append(col)
-    start_timedt = time.time()
-    train_featurestree = vectorizer.fit_transform(x)
-    actual1 = y  
-    #test_features1 = vectorizer.transform(z)
-    test_features1 = vectorizer.transform(x)
-    dtree = tree.DecisionTreeClassifier()
-    dtree = dtree.fit(train_featurestree, [int(r) for r in y])
-    prediction1 = dtree.predict(test_features1)
-    st.subheader('Model Metrics:')
-    #metric(tweet['label'], prediction1)
-    metric(tweets['Sentiment'], prediction1)
-    #st.write(metrics.confusion_matrix(tweet['label'], prediction1, labels=[0, 1]))
-    #st.write(metrics.confusion_matrix(tweets['Sentiment'], prediction1, labels=[0, 1]))
-    dt_matrix = confusion_matrix(actual1, prediction1)
-    
-    plot_confusion_matrix(dt_matrix, classes=[0,1], title='Confusion matrix')
-    
-   
-
 
 def pred(inputtweet):
     tweet = pd.read_csv('{}_tweets.csv'.format(inputtweet))
     tweet["label"] = ""
     tweet.drop(['created_at'], axis = 1, inplace = True)
     tweet.drop(['id'], axis = 1, inplace = True)
-    train_featurestree = vectorizer.fit_transform(x)
-    dtree = tree.DecisionTreeClassifier()  
-    dtree = dtree.fit(train_featurestree, [int(r) for r in y]) 
     i=0
     nlp = spacy.load('en_core_web_lg')
-    
     for row in tweet['text']:
         RE_EMOJI = re.compile('[\U00010000-\U0010ffff]', flags=re.UNICODE)
         row = RE_EMOJI.sub(r'', row)
         row = ''.join([c for c in row if ord(c) < 128])
         row=contractions.fix(row)
-        j=find_negated_wordSentIdxs_in_sent(nlp(row))      
+    
+    
+        j=find_negated_wordSentIdxs_in_sent(nlp(row))
+        row=re.sub(r"http\S+|www\S+|https\S+","",row,flags=re.MULTILINE)
+        row=re.sub(r'\@\w+|\#',"",row,flags=re.MULTILINE)
+        row=row.translate(str.maketrans("","",string.punctuation))
+        row = ''.join([c for c in row if ord(c) < 128])
+        row=row.strip()
+        row_tokens=word_tokenize(row)
+        filtered_words=[word for word in row_tokens if word not in stopwords.words('english')]
+        ps=PorterStemmer()
+        stemmed_words=[ ps.stem(w) for w in filtered_words]
+        lemmatizer=WordNetLemmatizer()
+        lemma_words=[lemmatizer.lemmatize(w,pos='a') for w in stemmed_words]
+        row = " ".join(lemma_words)
+        vectorizer = pickle.load(open('vectorizersvc.pickle', 'rb'))
         inputdtree= vectorizer.transform([row])
-        predictt = dtree.predict(inputdtree)
+        predictt = svc.predict(inputdtree)
+
 
         
         if (j != set()):
@@ -193,8 +131,8 @@ def pred(inputtweet):
         else:
             tweet.loc[i,'label'] = int(predictt)
         i=i+1
-    nodep=(tweet.label == 1).sum()
-    dep=(tweet.label == 0).sum()
+    nodep=(tweet.label == 0).sum()
+    dep=(tweet.label == 1).sum()
     sum=nodep+dep
     percentage=dep/sum
     st.subheader('Depression Level:')
@@ -213,35 +151,24 @@ def pred(inputtweet):
         
     else:
         st.write("Extreme Depression")
-        
-    print (dep)
-    print (percentage)
+
 
     st.subheader('Training Data Information:')
-    st.write("Available [here](https://drive.google.com/file/d/1X6oA1Jvs4c-3tYJZwJJVmM0pzKabQKly/view?usp=sharing)")
+    st.write("Available [here](https://drive.google.com/file/d/1QK5IOH4mWeFtqppTBbxDuEonohhrjdIj/view?usp=sharing)")
  
     st.subheader('WordCloud Analysis of Training Data:')
     st.write("Available [here](https://drive.google.com/drive/folders/1VMG0MgJ-nZrEYRTLBxbKVwtwNVUKXq0N?usp=sharing)")
+
+    st.subheader('Model Metrics: ')
+    st.write("Available [here](https://drive.google.com/file/d/1EokLG36SlHz_HSBDdVnFE-NkzWS64_p8/view?usp=sharing)")
 try:
     with st.form(key='my_form'):
         inputtweet = st.text_input(label='Input your twitter handle without @:')
-        col1, col2, col3 , col4, col5 = st.columns(5)
-
-        with col1:
-            pass
-        with col2:
-            pass
-        with col3:
-            pass
-        with col4:
-            pass
-        with col5 :      
-            submit_button = st.form_submit_button(label='Check')
-      
+        submit_button = st.form_submit_button(label='Check')
         get_all_tweets(inputtweet)
-    learns()
+
+    
     pred(inputtweet)
 except:
     time.sleep(10)
     st.info("Waiting for your correct input...")
-    
