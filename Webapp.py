@@ -15,6 +15,7 @@ spacy.cli.download("en_core_web_lg")
 import nltk
 nltk.download('punkt')
 nltk.download('wordnet')
+nltk.download('stopwords')
 import time
 import matplotlib.pyplot as plt
 from wordcloud import WordCloud
