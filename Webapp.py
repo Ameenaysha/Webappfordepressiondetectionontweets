@@ -162,15 +162,15 @@ def pred(inputtweet):
 
     st.subheader('Model Metrics: ')
     st.write("Available [here](https://drive.google.com/file/d/1EokLG36SlHz_HSBDdVnFE-NkzWS64_p8/view?usp=sharing)")
-#try:
-with st.form(key='my_form'):
-    inputtweet = st.text_input(label='Input your twitter handle without @:')
-    submit_button = st.form_submit_button(label='Check')
-    get_all_tweets(inputtweet)
+try:
+    with st.form(key='my_form'):
+        inputtweet = st.text_input(label='Input your twitter handle without @:')
+        submit_button = st.form_submit_button(label='Check')
+        get_all_tweets(inputtweet)
 
     
-pred(inputtweet)
-#except:
- #   time.sleep(10)
-  #  st.info("Waiting for your correct input...")
+    pred(inputtweet)
+except:
+    time.sleep(10)
+    st.info("Waiting for your correct input...")
     
